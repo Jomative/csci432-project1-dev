@@ -1,70 +1,119 @@
-// PrivateMessages.vue - Displays private messages and allows sending new ones
-<template>
-  <div>
-    <h2>Messages with {{ route.query.name }}</h2>
-    <div v-for="msg in messages" :key="msg._id">
-      <Message :senderName="msg.senderName" :updatedAt="msg.updatedAt" :text="msg.text" />
-    </div>
-    <input v-model="newMessage" placeholder="Type a message..." />
-    <button @click="sendMessage">Send</button>
-  </div>
-</template>
-
 <script setup>
-import { ref, onMounted } from 'vue';
+import { server_url } from '@/util';
+import { ref } from 'vue';
 import { useRoute } from 'vue-router';
-import Message from './Message.vue';
+
+const props = defineProps({
+    userId:{
+        type:String,
+        required:true
+    }
+})
+console.log(props.userId);
 
 const route = useRoute();
-const messages = ref([]);
-const newMessage = ref('');
 
-const fetchMessages = async () => {
-  const token = localStorage.getItem("token");
-  const url = `https://hap-app-api.azurewebsites.net/messages/${route.params.userId}`;
+const message = ref();
 
-  try {
-    let response = await fetch(url, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+const msgs = ref([
+    "msg1", "sjnfe"
+]);
+
+async function getMessages(){
+    const url = server_url + '/messages/' + props.userId;
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(url, {
+        method: "GET",
+        headers: {
+            Authorization:`Bearer ${token}`
+        }
     });
-
-    if (response.ok) {
-      messages.value = await response.json();
+    if(res.ok){
+        const data = await res.json();
+        console.log("all good", data)
+        msgs.value = data;
     } else {
-      console.error('Failed to fetch messages:', response.statusText);
+        console.log("erraa", res.status)
     }
-  } catch (err) {
-    console.error('Network error:', err);
-  }
-};
+}
+getMessages();
 
-const sendMessage = async () => {
-  const token = localStorage.getItem("token");
-  const url = `https://hap-app-api.azurewebsites.net/message/${route.params.userId}`;
+async function sendPM(){
+    const url = server_url + '/message/' + props.userId;
+    const token = localStorage.getItem("token");
 
-  try {
-    let response = await fetch(url, {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`
-      },
-      body: JSON.stringify({ text: newMessage.value })
+    const res = await fetch(url, {
+        method: "POST",
+        headers: {
+            Authorization:`Bearer ${token}`,
+            "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+
+            text:message.value
+        })
     });
-
-    if (response.ok) {
-      newMessage.value = '';
-      fetchMessages();
+    if(res.ok){
+        const data = await res.json();
+        console.log("all good", data)
+        msgs.value.splice(0,0,data);
+        message.value = "";
     } else {
-      console.error('Failed to send message:', response.statusText);
+        console.log("erraa", res.status)
     }
-  } catch (err) {
-    console.error('Network error:', err);
-  }
-};
+}
 
-onMounted(fetchMessages);
 </script>
+<template>
+    <div id="cont grid-panel">
+        <h1>Now chatting with <span id="usname">{{ route.query.name }}</span></h1>
+        <br>
+        <div id="msgContainer">
+            <input type="text" v-model="message" placeholder="Enter your message" maxlength="280">
+            <button @click="sendPM()">Send Message</button>
+        </div>
+        <br>
+        <div id="msgCont" class="msgCont2">
+            <h1 v-for="msg in msgs" :me="msg.senderId != props.userId">
+                <h2 id="senderName">{{ msg.senderName }}</h2>
+                <h1 id="message">{{ msg.text }}</h1>
+            </h1>
+        </div>
+    </div>
+</template>
+<style scoped>
+#cont{
+    font-weight: 600;
+}
+#usname{
+    font-weight: 800;
+    color:royalblue;
+}
+#msgCont{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items:start;
+    height:calc(100% - 67px);
+}
+.msgCont2{
+    overflow-y:scroll;
+    /* margin-bottom:200px; */
+}
+#msgCont > *{
+    padding:10px 20px;
+    background-color: hsl(0, 0%, 92%);
+    border:solid 2px gray;
+    border-radius: 10px;
+    margin-block:5px;
+}
+#msgCont > *[me=true]{
+    align-self: flex-end;
+}
+#senderName{
+    font-weight: 700;
+    color:royalblue;
+    text-decoration: underline;
+}
+</style>

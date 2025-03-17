@@ -6,8 +6,7 @@ import { ref } from 'vue';
 
 const router = useRouter();
 const username = ref(localStorage.getItem('fname') || 'Guest');
-const message = ref('');
-const errorMessage = ref('');
+
 
 window.updateMainUsername = ()=>{
     username.value = localStorage.getItem("fname");
@@ -48,51 +47,7 @@ async function signOut() {
     router.push({ name: 'home' });
 }
 
-async function postMessage() {
-    const token = localStorage.getItem("token");
 
-    if (!token) {
-        errorMessage.value = 'Unauthorized: Please log in.';
-        return;
-    }
-
-    if (!message.value.trim()) {
-        errorMessage.value = 'Message cannot be empty.';
-        return;
-    }
-
-    const url = 'https://hap-app-api.azurewebsites.net/message';
-
-    const options = {
-        method: "POST",
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ text: message.value }) // Fixed property name
-    };
-
-    try {
-        let response = await fetch(url, options);
-
-        if (response.ok) {
-            if (response.status === 201) {
-                message.value = '';
-                errorMessage.value = ''; // Reset error on success
-                console.log('Message posted successfully');
-            }
-        } else if (response.status === 400) {
-            errorMessage.value = 'Invalid message format.';
-        } else if (response.status === 401) {
-            errorMessage.value = 'Unauthorized: Please log in.';
-        } else {
-            errorMessage.value = 'An unexpected error occurred. Please try again.';
-        }
-    } catch (err) {
-        errorMessage.value = 'Network error: Please check your connection.';
-        console.error(err);
-    }
-}
 </script>
 
 <template>
@@ -108,11 +63,7 @@ async function postMessage() {
     <main class="padding-block-700" id="mainTest">
         <section class="container center">
             <h1 class="fs-secondary-heading">Welcome, {{ username }}!</h1>
-            <div id="msgCont">
-                <input type="text" v-model="message" placeholder="Enter your message" maxlength="280">
-                <button @click="postMessage">Send Message</button>
-                <p class="error" v-if="errorMessage">⚠️ {{ errorMessage }}</p>
-            </div>
+            
         </section>
         <RouterView name="mainHomeCont"></RouterView>
     </main>

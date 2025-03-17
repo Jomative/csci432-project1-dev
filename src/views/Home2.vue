@@ -13,9 +13,9 @@
             <RouterView name="rightSidebar" class="grid-panel vline"></RouterView>
         </main>
 
-        <footer>
+        <!-- <footer>
             <h1 class="secondary-heading">Footer</h1>
-        </footer>
+        </footer> -->
     </div>
 </template>
 <style scoped>

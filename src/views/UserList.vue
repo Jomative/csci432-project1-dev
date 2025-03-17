@@ -1,9 +1,9 @@
 <template>
-    <div>
+    <div class="cont">
         <input v-model="query" placeholder="Search users..." @input="() => searchUsers(query, 0, 10)" />
         <ul>
-            <li v-for="user in users" :key="user._id">
-                <RouterLink :to="`/user/${user._id}?name=${user.userName}`">
+            <li class="userLiItem" v-for="user in users" :key="user._id">
+                <RouterLink class="userItem" :to="`/user/${user._id}?name=${user.userName}`">
                     {{ user.firstName }} {{ user.lastName }}
                 </RouterLink>
             </li>
@@ -30,7 +30,7 @@ async function searchUsers(query, page = 0, limit = 10, sortBy = "userName:asc")
     const url = new URL(`${serverUrl}${endpoint}`);
     url.searchParams.set("search", `userName|firstName|lastName:${query}`);
     url.searchParams.set("sortBy", sortBy);
-    url.searchParams.set("limit", limit);
+    // url.searchParams.set("limit", li mit);
     url.searchParams.set("skip", limit * page);
 
     try {
@@ -48,6 +48,7 @@ async function searchUsers(query, page = 0, limit = 10, sortBy = "userName:asc")
 
         const data = await response.json();
         console.log(data);
+        users.value = data;
         return data;
     } catch (error) {
         console.error("Failed to fetch users:", error);
@@ -55,6 +56,20 @@ async function searchUsers(query, page = 0, limit = 10, sortBy = "userName:asc")
     }
 }
 
-// Example usage:
-searchUsers("joe", 0, 10);
+// Show all by default:
+searchUsers("", 0, 10);
 </script>
+
+<style scoped>
+div.cont{
+    overflow-y:scroll;
+    overflow-x:hidden;
+    /* margin-bottom:220px; */
+}
+.userItem{
+    margin-left: 5px;
+}
+.userLiItem{
+    margin-left: 20px;
+}
+</style>

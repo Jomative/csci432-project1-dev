@@ -4,7 +4,7 @@
     <div class="menu">
         <ul>
             <li>
-                <RouterLink to="/">
+                <RouterLink to="/main">
                     <div class="flex align-center">
                         <div class="icon">menu</div>
                         <span class="menu-item">Home</span>
@@ -19,6 +19,15 @@
                     </div>
                 </RouterLink>
             </li>
+            <li>
+                <RouterLink to="/usersearch">
+                    <div class="flex align-center">
+                        <div class="icon">search</div>
+                        <span class="menu-item">Search User</span>
+                    </div>
+                </RouterLink>
+            </li>
+            
         </ul>
     </div>
 </template>

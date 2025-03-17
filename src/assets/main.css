@@ -383,5 +383,8 @@ a:visited {
 
   width: min(var(--max-width), 100% - (var(--padding) * 2));
   margin-inline: auto;
-  height:100vh;
+  height:calc(100vh - 200px);
+}
+.grid-panel{
+  height:75%;
 }

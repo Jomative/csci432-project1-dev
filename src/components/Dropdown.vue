@@ -6,7 +6,7 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 const isOpen = ref(false);
 const selected = ref('Select an option');
-const options = ref(['Delete Account', 'Profile', 'Send Message?']);
+const options = ref(['Delete Account', 'Profile']);
 const token = localStorage.getItem("token");
 const toggleDropdown = () => {
     isOpen.value = !isOpen.value;
@@ -27,17 +27,17 @@ const selectOption = (option) => {
         router.push('/main/profile');
     }
     isOpen.value = false;
-    if (selected.value == 'Send Message?') {
-        const msgCont = document.getElementById('msgCont');
-        if (msgCont) {
-            const isVisible = msgCont.style.display === 'block';
-            msgCont.style.display = isVisible ? 'none' : 'block';
-            const children = msgCont.children;
-            for (let i = 0; i < children.length; i++) {
-                children[i].style.display = isVisible ? 'none' : 'block';
-            }
-        }
-    }
+    // if (selected.value == 'Send Message?') {
+    //     const msgCont = document.getElementById('msgCont');
+    //     if (msgCont) {
+    //         const isVisible = msgCont.style.display === 'block';
+    //         msgCont.style.display = isVisible ? 'none' : 'block';
+    //         const children = msgCont.children;
+    //         for (let i = 0; i < children.length; i++) {
+    //             children[i].style.display = isVisible ? 'none' : 'block';
+    //         }
+    //     }
+    // }
 };
 async function deleteAccount(){
     const response = await fetch('https://hap-app-api.azurewebsites.net/user', {
