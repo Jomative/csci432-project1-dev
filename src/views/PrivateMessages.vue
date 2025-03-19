@@ -1,7 +1,10 @@
 <script setup>
+import { useUserStore } from '@/stores/user';
 import { server_url } from '@/util';
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
+
+const userStore = useUserStore();
 
 const props = defineProps({
     userId:{
@@ -21,7 +24,8 @@ const msgs = ref([
 
 async function getMessages(){
     const url = server_url + '/messages/' + props.userId;
-    const token = localStorage.getItem("token");
+    // const token = localStorage.getItem("token");
+    const token = userStore.token;
 
     const res = await fetch(url, {
         method: "GET",
@@ -41,7 +45,8 @@ getMessages();
 
 async function sendPM(){
     const url = server_url + '/message/' + props.userId;
-    const token = localStorage.getItem("token");
+    // const token = localStorage.getItem("token");
+    const token = userStore.token;
 
     const res = await fetch(url, {
         method: "POST",

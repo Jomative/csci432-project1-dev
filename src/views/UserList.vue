@@ -12,15 +12,18 @@
 </template>
 
 <script setup>
+import { useUserStore } from '@/stores/user';
 import { ref } from 'vue';
 
+const userStore = useUserStore();
 const query = ref('');
 const users = ref([]);
 
 async function searchUsers(query, page = 0, limit = 10, sortBy = "userName:asc") {
     const serverUrl = "https://hap-app-api.azurewebsites.net";
     const endpoint = "/users";
-    const token = localStorage.getItem("token"); // Retrieve token from local storage
+    // const token = localStorage.getItem("token"); // Retrieve token from local storage
+    const token = userStore.token;
 
     if (!token) {
         console.error("Please login.");

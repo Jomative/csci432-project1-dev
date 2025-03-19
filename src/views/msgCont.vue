@@ -3,6 +3,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import { server_url } from '@/util';
 import Message from './Message.vue';
 
+const userStore = useUserStore();
 const msgs = ref([]);
 const loading = ref(false);
 const lastMessageDate = ref(null);  // Oldest message timestamp for `before`
@@ -17,7 +18,8 @@ async function loadMessages(before = null, after = null, prepend = false) {
     if (before) url += `&before=${before}`;
     if (after) url += `&after=${after}`;
 
-    let token = localStorage.getItem("token");
+    // let token = localStorage.getItem("token");
+    let token = userStore.token;
     let response = await fetch(url, {
         method: "GET",
         headers: { Authorization: `Bearer ${token}` }
@@ -62,6 +64,7 @@ function handleScroll(event) {
 
 // Set up scroll event listener
 import { nextTick } from 'vue';
+import { useUserStore } from '@/stores/user';
 
 onMounted(async () => {
     await loadMessages(); // Initial fetch
@@ -97,65 +100,3 @@ onUnmounted(() => {
     height: 550px;
 }
 </style>
-
-<!-- <script setup>
-import { ref, onMounted } from 'vue';
-import { server_url } from '@/util';
-import Message from './Message.vue';
-
-let msgs = ref([]);
-let page = ref(1);
-let loading = ref(false);
-
-async function loadMessages() {
-    if (loading.value) return;
-    loading.value = true;
-    let url = `${server_url}/messages?limit=10&page=${page.value}`;
-    let token = localStorage.getItem("token");
-    let response = await fetch(url, {
-        method: "GET",
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    });
-    if (response.status == 200) {
-        let data = await response.json();
-        msgs.value = [...msgs.value, ...data];
-        page.value++;
-        console.log(data);
-    } else {
-        alert("An error has occurred: " + response.status);
-    }
-    loading.value = false;
-}
-
-function handleScroll(event) {
-    let element = event.target;
-    if (element.scrollHeight - element.scrollTop === element.clientHeight) {
-        loadMessages();
-    }
-}
-
-onMounted(() => {
-    loadMessages();
-    let mainCont = document.getElementById('mainCont');
-    mainCont.addEventListener('scroll', handleScroll);
-});
-</script>
-
-<template>
-    <div class="flex justify-center">
-        <div id="mainCont">
-            <Message v-for="msg in msgs" :key="msg.id" :text="msg.text" :senderName="msg.senderName" :updatedAt="msg.updatedAt"/>
-        </div>
-    </div>
-</template>
-
-<style scoped>
-#mainCont {
-    display: flex;
-    flex-direction: column;
-    overflow: scroll;
-    height: 550px;
-}
-</style> -->

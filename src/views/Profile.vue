@@ -1,14 +1,17 @@
 <script setup>
+import { useUserStore } from '@/stores/user';
 import { server_url } from '@/util';
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
+const userStore = useUserStore();
 const router = useRouter();
 const user = ref({});
 const error = ref(null);
 const isModalOpen = ref(false);
 
-const token = localStorage.getItem("token");
+// const token = localStorage.getItem("token");
+const token = userStore.token;
 const fetchUserProfile = async () => {
     if (!token) {
         error.value = "Unauthorized: No token found.";
@@ -76,8 +79,9 @@ const saveChanges = async () => {
                 fname: updatedUser.firstName,
                 lname: updatedUser.lastName
             };
-            localStorage.setItem('fname', updatedUser.firstName);
-            localStorage.setItem('lname', updatedUser.lastName);
+            // localStorage.setItem('fname', updatedUser.firstName);
+            // localStorage.setItem('lname', updatedUser.lastName);
+            userStore.setUser(userStore.token, updatedUser.firstName, updatedUser.lastName, updatedUser.email, updatedUser.userName);
             window.updateMainUsername();
             closeModal();
         } else {
@@ -103,10 +107,10 @@ onMounted(fetchUserProfile);
         </div>
 
         <div v-else-if="user">
-            <p><strong>Username:</strong> {{ user.userName }}</p>
-            <p><strong>First Name:</strong> {{ user.fname }}</p>
-            <p><strong>Last Name:</strong> {{ user.lname }}</p>
-            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Username:</strong> {{ userStore.userName }}</p>
+            <p><strong>First Name:</strong> {{ userStore.firstName }}</p>
+            <p><strong>Last Name:</strong> {{ userStore.lastName }}</p>
+            <p><strong>Email:</strong> {{ userStore.email }}</p>
             <button @click="openModal" class="edit-button">Edit</button>
         </div>
 

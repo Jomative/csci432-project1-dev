@@ -1,13 +1,14 @@
 <script setup>
+import { useUserStore } from '@/stores/user';
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
-
+const userStore = useUserStore();
 const router = useRouter();
 const isOpen = ref(false);
 const selected = ref('Select an option');
 const options = ref(['Delete Account', 'Profile']);
-const token = localStorage.getItem("token");
+const token = userStore.token;
 const toggleDropdown = () => {
     isOpen.value = !isOpen.value;
 };
@@ -24,7 +25,8 @@ const selectOption = (option) => {
     }
     if(selected.value == 'Profile'){
         // hmm but isnt Eric doing all this stuff with just index.js and router stuff?
-        router.push('/main/profile');
+        // router.push('/main/profile');
+        router.push({name:"profile"});
     }
     isOpen.value = false;
     // if (selected.value == 'Send Message?') {
@@ -48,9 +50,10 @@ async function deleteAccount(){
     });
     if (response.ok) {
 		if (response.status === 200) {
-            localStorage.removeItem('email');
-            localStorage.removeItem('username');
-            localStorage.removeItem('token');
+            // localStorage.removeItem('email');
+            // localStorage.removeItem('username');
+            // localStorage.removeItem('token');
+            userStore.$reset();
 
 		}
 	} else {

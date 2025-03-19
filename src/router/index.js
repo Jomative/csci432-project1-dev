@@ -23,17 +23,26 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: Home
+      component: Home,
+      meta:{
+        authRequired: false
+      }
     },
     {
       path: '/signin',
       name: 'signin',
-      component: SignIn
+      component: SignIn,
+      meta:{
+        authRequired: false
+      }
     },
     {
       path: '/join',
       name: 'join',
-      component: Join
+      component: Join,
+      meta:{
+        authRequired: false
+      }
     },
     {
       path: '/main',
@@ -52,6 +61,9 @@ const router = createRouter({
                 leftSidebar: Menu,
                 focus: MsgCont,
                 rightSidebar: PostMsgCont
+              },
+              meta:{
+                authRequired: true
               }
             },
             {
@@ -59,6 +71,9 @@ const router = createRouter({
               components: {
                 leftSidebar: Menu,
                 focus: Settings
+              },
+              meta:{
+                authRequired: true
               }
             },
             {
@@ -67,6 +82,9 @@ const router = createRouter({
                 leftSidebar: Menu,
                 focus: Settings,
                 rightSidebar: Account
+              },
+              meta:{
+                authRequired: true
               }
             },
             {
@@ -75,13 +93,20 @@ const router = createRouter({
                 leftSidebar: Menu,
                 focus: Settings,
                 rightSidebar: Subscriptions
+              },
+              meta:{
+                authRequired: true
               }
             },
             {
               path: '/profile',
+              name:"profile",
               components: {
                 leftSidebar: Menu,
                 focus: Profile
+              },
+              meta:{
+                authRequired: true
               }
             },
             {
@@ -89,6 +114,9 @@ const router = createRouter({
               components: {
                 leftSidebar: Menu,
                 focus: UserList
+              },
+              meta:{
+                authRequired: true
               }
             },
             {
@@ -98,7 +126,10 @@ const router = createRouter({
                 focus: UserList,
                 rightSidebar: PrivateMessages
               },
-              props: true
+              props: true,
+              meta:{
+                authRequired: true
+              }
             }
           ]
         }
@@ -107,4 +138,19 @@ const router = createRouter({
   ],
 })
 
+router.beforeEach((to, from)=>{
+
+  if(to.matched.length == 0){
+    if(localStorage.getItem("token")){ //put them just to main if they're already logged in when trying to access a non-existing page
+      return "/main";
+    }
+    return "/";
+  }
+
+  if(to.meta.authRequired){
+    if(localStorage.getItem("token")) return;
+    return "/";
+  }
+  
+})
 export default router

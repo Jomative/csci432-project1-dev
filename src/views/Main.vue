@@ -3,17 +3,21 @@ import Header from '../components/Header.vue'
 import Dropdown from '@/components/Dropdown.vue';
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
+import { useUserStore } from '@/stores/user';
 
+const userStore = useUserStore();
 const router = useRouter();
-const username = ref(localStorage.getItem('fname') || 'Guest');
+const username = ref(userStore.userName);
 
 
 window.updateMainUsername = ()=>{
-    username.value = localStorage.getItem("fname");
+    // username.value = localStorage.getItem("fname");
+    username.value = userStore.firstName;
 };
 
 async function signOut() {
-    const token = localStorage.getItem("token")
+    // const token = localStorage.getItem("token")
+    const token = userStore.token;
 
     const url = 'https://hap-app-api.azurewebsites.net/user/logout'
 
@@ -28,9 +32,10 @@ async function signOut() {
 
     if (response.ok) {
         if (response.status === 200) {
-            localStorage.removeItem('email');
-            localStorage.removeItem('username');
-            localStorage.removeItem('token');
+            // localStorage.removeItem('email');
+            // localStorage.removeItem('username');
+            // localStorage.removeItem('token');
+            userStore.$reset();
 
             router.push({
                 name: 'home'
@@ -41,7 +46,7 @@ async function signOut() {
     }
 
     // Reset username display
-    username.value = 'Guest';
+    // username.value = 'Guest';
 
     // Redirect to home page
     router.push({ name: 'home' });

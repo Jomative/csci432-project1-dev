@@ -1,11 +1,14 @@
 <script setup>
+import { useUserStore } from '@/stores/user';
 import { ref } from 'vue';
 
+const userStore = useUserStore();
 const message = ref('');
 const errorMessage = ref('');
 
 async function postMessage() {
-    const token = localStorage.getItem("token");
+    // const token = localStorage.getItem("token");
+    const token = userStore.token;
 
     if (!token) {
         errorMessage.value = 'Unauthorized: Please log in.';

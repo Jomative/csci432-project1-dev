@@ -2,7 +2,9 @@
 import Header from '../components/Header.vue'
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
+import { useUserStore } from '@/stores/user';
 
+const userStore = useUserStore();
 const router = useRouter();
 const email = ref('');
 const password = ref('');
@@ -44,11 +46,12 @@ async function signIn() {
         console.log('Login successful:', data);
 
         // Store user token
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('email', email.value);
-        localStorage.setItem('lname', data.user.lastName)
-        localStorage.setItem('fname', data.user.firstName)
-        localStorage.setItem('username', data.user.userName);
+        // localStorage.setItem('token', data.token);
+        // localStorage.setItem('email', email.value);
+        // localStorage.setItem('lname', data.user.lastName)
+        // localStorage.setItem('fname', data.user.firstName)
+        // localStorage.setItem('username', data.user.userName);
+        userStore.setUser(data.token, data.user.firstName, data.user.lastName, data.user.email, data.user.userName);
 
         // Redirect to main page
         router.push({ name: 'main' });

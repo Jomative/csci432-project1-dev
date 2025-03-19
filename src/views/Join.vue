@@ -2,6 +2,9 @@
 import Header from '../components/Header.vue'
 import { useRouter } from 'vue-router'; 
 import { ref } from 'vue';
+import { useUserStore } from '@/stores/user';
+
+const userStore = useUserStore();
 
 const router = useRouter();
 
@@ -35,11 +38,13 @@ async function join() {
 
     const result = await createAccount(email.value, password.value, fname.value, lname.value, userName.value);
     if (result.success) {
-        localStorage.setItem('email', email.value);
-        localStorage.setItem('username', userName.value);
-        localStorage.setItem('fname', fname.value);
-        localStorage.setItem('lname', lname.value);
-        localStorage.setItem('token', result.data.token)
+        // localStorage.setItem('email', email.value);
+        // localStorage.setItem('username', userName.value);
+        // localStorage.setItem('fname', fname.value);
+        // localStorage.setItem('lname', lname.value);
+        // localStorage.setItem('token', result.data.token)
+
+        userStore.setUser(result.data.token, fname.value, lname.value, email.value, userName.value);
         router.push({ name: 'main' });
     } else {
         errorMessage.value = result.message;
